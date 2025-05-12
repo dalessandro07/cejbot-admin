@@ -2,7 +2,7 @@
 
 import { deleteLicencia } from '@/core/db/queries/delete'
 import { insertLicencia } from '@/core/db/queries/insert'
-import { updateEstadoLicencia } from '@/core/db/queries/update'
+import { updateEstadoLicencia, updatePlanLicencia } from '@/core/db/queries/update'
 import { PLANES } from '@/core/lib/constants'
 import { revalidatePath } from 'next/cache'
 
@@ -10,7 +10,7 @@ export async function actionInsertLicencia (initialState: unknown, formData: For
   // Obtener los datos del formulario
   let cliente = formData.get('cliente')?.toString() ?? ''
   const telefono = formData.get('telefono')?.toString() ?? ''
-  let plan = formData.get('plan')?.toString() ?? ''
+  const plan = formData.get('plan')?.toString() ?? ''
   const expiracion = formData.get('expiracion')?.toString() ?? ''
 
   // Validar los datos del formulario
@@ -21,10 +21,9 @@ export async function actionInsertLicencia (initialState: unknown, formData: For
     }
   }
 
-  // Si se eligió el plan de prueba, cambiar el nombre del cliente y el plan a básico
+  // Si se eligió el plan de prueba, cambiar el nombre del cliente
   if (plan === PLANES.PRUEBA) {
     cliente = cliente.concat(' (Prueba)')
-    plan = PLANES.BASICO
   }
 
   // Generar la licencia
@@ -111,6 +110,37 @@ export async function actionDeleteLicencia (initialState: unknown, formData: For
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error al eliminar la licencia'
+    return {
+      success: false,
+      message
+    }
+  } finally {
+    revalidatePath('/')
+  }
+}
+
+export async function actionUpdatePlanLicencia (initialState: unknown, formData: FormData) {
+  // Obtener los datos del formulario
+  const id = formData.get('id')?.toString() ?? ''
+  const plan = formData.get('plan')?.toString() ?? ''
+
+  // Validar los datos del formulario
+  if (!id || !plan) {
+    return {
+      success: false,
+      message: 'Faltan datos para actualizar el plan de la licencia.'
+    }
+  }
+
+  try {
+    await updatePlanLicencia(Number(id), plan)
+
+    return {
+      success: true,
+      message: 'Plan de licencia actualizado con éxito.'
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al actualizar el plan de la licencia'
     return {
       success: false,
       message

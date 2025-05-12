@@ -7,19 +7,17 @@ import {
   AccordionTrigger
 } from '@/core/components/ui/accordion'
 import { Badge } from '@/core/components/ui/badge'
-import { Button } from '@/core/components/ui/button'
-import { Switch } from '@/core/components/ui/switch'
-import WhatsappLink from '@/core/components/ui/whatsapp-link'
 import type { TLicencia } from '@/core/db'
 import useToastState from '@/core/hooks/useToastState'
 import { PLANES_DISPLAY } from '@/core/lib/constants'
-import { formatDate } from '@/core/lib/utils'
 import type { TPlan } from '@/core/types'
-import { actionUpdateEstadoLicencia } from '@/features/licencias/actions'
+import { actionUpdateEstadoLicencia, actionUpdatePlanLicencia } from '@/features/licencias/actions'
 import BtnEliminar from '@/features/licencias/components/item/btn-eliminar'
+import EstadoLicencia from '@/features/licencias/components/item/components/estado-licencia'
+import LicenciaInfo from '@/features/licencias/components/item/components/licencia-info'
+import SelectorPlan from '@/features/licencias/components/item/components/selector-plan'
 import useWhatsappMsg from '@/features/licencias/hooks/useWhatsappMsg'
-import { ClipboardIcon, Loader2 } from 'lucide-react'
-import { startTransition, useActionState } from 'react'
+import { useActionState, useState } from 'react'
 
 export default function ItemLicencia ({
   licencia
@@ -27,94 +25,51 @@ export default function ItemLicencia ({
   licencia: TLicencia
 }) {
   const [state, formAction, isPending] = useActionState(actionUpdateEstadoLicencia, null)
+  const [planState, formPlanAction, isPlanPending] = useActionState(actionUpdatePlanLicencia, null)
   const { wspMessage, isActive, setIsActive } = useWhatsappMsg(licencia)
+  const [currentPlan, setCurrentPlan] = useState<TPlan>(licencia.plan as TPlan)
 
   useToastState(state)
-
-  const handleCheckedChange = (checked: boolean) => {
-    setIsActive(checked)
-
-    const formData = new FormData()
-    formData.append('id', licencia.id.toString())
-    formData.append('estado', checked ? '1' : '0')
-
-    startTransition(() => {
-      formAction(formData)
-    })
-  }
-
-  const handleCopyLicense = () => {
-    navigator.clipboard.writeText(licencia.licencia)
-  }
+  useToastState(planState)
 
   return (
     <Accordion type="single" collapsible className="w-full mb-4">
-      <AccordionItem value={`licencia-${licencia.id}`} className="border rounded-lg shadow-sm">
-        <AccordionTrigger className="px-4 py-2 hover:no-underline">
+      <AccordionItem value={`licencia-${licencia.id}`} className="overflow-hidden border rounded-lg shadow-sm">
+        <AccordionTrigger className="px-4 py-2.5 hover:no-underline bg-background">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3 text-left">
               <span className="font-medium">{licencia.cliente}</span>
             </div>
-            <Badge variant={licencia.plan as TPlan} className="text-sm font-medium">
-              {PLANES_DISPLAY[licencia.plan as TPlan]}
+            <Badge variant={currentPlan} className="text-xs font-medium">
+              {PLANES_DISPLAY[currentPlan]}
             </Badge>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-4 pt-2 pb-4">
+        <AccordionContent className="px-5 pt-3 pb-4 bg-gradient-to-b from-background to-muted/20">
           <div className="space-y-4">
-            <div className="space-y-1 text-sm">
-              <p className="flex justify-between">
-                <span className="text-muted-foreground">Teléfono:</span>
-                <WhatsappLink whatsappNumber={licencia.telefono} message={wspMessage} />
-              </p>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Licencia:</span>
-                <div className="flex items-center gap-2">
-                  <span>{licencia.licencia}</span>
-                  <Button onClick={handleCopyLicense} variant="outline" size="sm">
-                    <ClipboardIcon />
-                    <span className="sr-only">Copiar licencia</span>
-                  </Button>
-                </div>
+            <LicenciaInfo licencia={licencia} wspMessage={wspMessage} />
+
+            <div className="flex flex-wrap items-center justify-between pt-2 gap-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium">Estado:</span>
+                <EstadoLicencia
+                  id={licencia.id}
+                  isActive={isActive}
+                  setIsActive={setIsActive}
+                  formAction={formAction}
+                  isPending={isPending}
+                />
               </div>
-              <p className="flex justify-between">
-                <span className="text-muted-foreground">Creación:</span>
-                <span>{formatDate(licencia.creacion!, 'full', 'short')}</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="text-muted-foreground">Expiración:</span>
-                <span>{formatDate(licencia.expiracion!, 'full', 'short')}</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="text-muted-foreground">Id. Dispositivo:</span>
-                <span>{licencia.dispositivo ?? 'No se ha utilizado aún.'}</span>
-              </p>
-            </div>
 
-            <div className="flex items-center justify-between w-full gap-2 pt-3 border-t">
-              <span className="text-sm font-medium">Estado</span>
-              <div className="flex items-center gap-5">
-                <div className="flex items-center gap-2">
-                  <Switch
-                    name='estado'
-                    checked={isActive}
-                    onCheckedChange={handleCheckedChange}
-                    disabled={isPending}
-                  />
-                  {isPending ? (
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      <span className="text-sm">
-                        {isActive ? 'Activando' : 'Desactivando'}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className={`text-sm ${isActive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
-                      {isActive ? 'Activo' : 'Inactivo'}
-                    </span>
-                  )}
-                </div>
-
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium">Plan:</span>
+                <SelectorPlan
+                  id={licencia.id}
+                  currentPlan={currentPlan}
+                  setCurrentPlan={setCurrentPlan}
+                  formPlanAction={formPlanAction}
+                  isPlanPending={isPlanPending}
+                />
                 <BtnEliminar id={licencia.id} />
               </div>
             </div>

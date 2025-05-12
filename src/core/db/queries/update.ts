@@ -13,3 +13,14 @@ export async function updateEstadoLicencia (
     .where(eq(licenciasTable.id, id))
     .execute()
 }
+
+export async function updatePlanLicencia (
+  id: number,
+  plan: string,
+): Promise<void> {
+  await db
+    .update(licenciasTable)
+    .set({ plan })
+    .where(eq(licenciasTable.id, id))
+    .execute()
+}

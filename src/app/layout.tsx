@@ -1,4 +1,5 @@
-import Header from '@/core/components/layout/header'
+import AppSidebar from '@/core/components/layout/app-sidebar'
+import { SidebarProvider, SidebarTrigger } from '@/core/components/ui/sidebar'
 import { Toaster } from '@/core/components/ui/sonner'
 import { checkSession } from '@/features/auth/lib/session'
 import type { Metadata } from "next"
@@ -31,11 +32,17 @@ export default async function RootLayout ({
       <body
         className={`${inter.variable}`}
       >
-        <div className='flex flex-col max-w-2xl mx-auto min-h-dvh'>
-          {isLoggedIn ? <Header /> : null}
-
-          {children}
-          <Toaster richColors />
+        <div className='flex min-h-dvh'>
+          <SidebarProvider>
+            {isLoggedIn ? <AppSidebar /> : null}
+            <div className='flex flex-col flex-1 min-h-dvh'>
+              <main className='flex-1'>
+                <SidebarTrigger />
+                {children}
+              </main>
+              <Toaster richColors />
+            </div>
+          </SidebarProvider>
         </div>
       </body>
     </html>

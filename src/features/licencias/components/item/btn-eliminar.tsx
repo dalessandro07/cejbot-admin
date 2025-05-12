@@ -22,12 +22,17 @@ export default function BtnEliminar ({ id }: { id: number }) {
   }
 
   useToastState(state)
-
   return (
     <Form action={handleSubmit}>
-      <Button type='submit' variant="destructive" disabled={isPending}>
-        <TrashIcon className="w-4 h-4" />
-        {isPending ? 'Eliminando...' : 'Eliminar'}
+      <Button
+        type='submit'
+        variant="destructive"
+        disabled={isPending}
+        size="icon"
+        className="h-8 w-8 rounded-md"
+      >
+        <TrashIcon className="w-3.5 h-3.5" />
+        <span className="sr-only">{isPending ? 'Eliminando...' : 'Eliminar'}</span>
       </Button>
     </Form>
   )
