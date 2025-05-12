@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/c
 import type { TLicencia } from '@/core/db'
 import { PLANES_DISPLAY } from '@/core/lib/constants'
 import { formatDate } from '@/core/lib/utils'
+import BtnRenovarMes from '@/features/licencias/components/item/components/btn-renovar-mes'
 import { AlertTriangleIcon, CalendarIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -59,18 +60,20 @@ export default function LicenciasProximasVencer ({ licencias }: LicenciasProxima
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-medium truncate">{licencia.cliente}</h3>
                   <Badge variant={plan === 'prueba' ? 'outline' : plan}>{PLANES_DISPLAY[plan]}</Badge>
-                </div>
-                <div className="flex flex-col gap-1 mt-auto">
+                </div>                <div className="flex flex-col gap-1 mt-auto">
                   <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                     <CalendarIcon className="w-4 h-4" />
                     <span>Vence el {formatDate(licencia.expiracion!, 'short', 'short')}</span>
                   </div>
-                  <Link
-                    href="/licencias"
-                    className="px-3 py-1.5 mt-2 text-xs text-center text-primary border border-primary/25 rounded-md hover:bg-primary/10 transition-colors"
-                  >
-                    Ver detalles
-                  </Link>
+                  <div className="flex gap-2 mt-2">
+                    <BtnRenovarMes id={licencia.id} size="sm" className="w-full" />
+                    <Link
+                      href="/licencias"
+                      className="px-3 py-1.5 text-xs text-center text-primary border border-primary/25 rounded-md hover:bg-primary/10 transition-colors flex-1"
+                    >
+                      Ver detalles
+                    </Link>
+                  </div>
                 </div>
               </div>
             )

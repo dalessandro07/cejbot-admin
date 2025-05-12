@@ -34,6 +34,7 @@ export default function ListaLicencias ({
       <Tabs defaultValue="todos" onValueChange={setPlanFilter}>
         <TabsList className="flex-wrap w-full h-full">
           <TabsTrigger value="todos">Todos</TabsTrigger>
+          <TabsTrigger value="prueba">Prueba</TabsTrigger>
           <TabsTrigger value="basico">Básico</TabsTrigger>
           <TabsTrigger value="personal">Personal</TabsTrigger>
           <TabsTrigger value="profesional">Profesional</TabsTrigger>

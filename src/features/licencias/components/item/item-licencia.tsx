@@ -13,6 +13,8 @@ import { PLANES_DISPLAY } from '@/core/lib/constants'
 import type { TPlan } from '@/core/types'
 import { actionUpdateEstadoLicencia, actionUpdatePlanLicencia } from '@/features/licencias/actions'
 import BtnEliminar from '@/features/licencias/components/item/btn-eliminar'
+import BtnRenovarMes from '@/features/licencias/components/item/components/btn-renovar-mes'
+import DialogRenovarLicencia from '@/features/licencias/components/item/components/dialog-renovar-licencia'
 import EstadoLicencia from '@/features/licencias/components/item/components/estado-licencia'
 import LicenciaInfo from '@/features/licencias/components/item/components/licencia-info'
 import SelectorPlan from '@/features/licencias/components/item/components/selector-plan'
@@ -70,7 +72,11 @@ export default function ItemLicencia ({
                   formPlanAction={formPlanAction}
                   isPlanPending={isPlanPending}
                 />
-                <BtnEliminar id={licencia.id} />
+                <div className="flex gap-2">
+                  <BtnRenovarMes id={licencia.id} variant="outline" />
+                  <DialogRenovarLicencia id={licencia.id} cliente={licencia.cliente} telefono={licencia.telefono} />
+                  <BtnEliminar id={licencia.id} />
+                </div>
               </div>
             </div>
           </div>

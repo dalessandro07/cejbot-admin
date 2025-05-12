@@ -2,7 +2,7 @@
 
 import { deleteLicencia } from '@/core/db/queries/delete'
 import { insertLicencia } from '@/core/db/queries/insert'
-import { updateEstadoLicencia, updatePlanLicencia } from '@/core/db/queries/update'
+import { renovarLicenciaPorMes, updateEstadoLicencia, updateExpiracionLicencia, updatePlanLicencia } from '@/core/db/queries/update'
 import { PLANES } from '@/core/lib/constants'
 import { revalidatePath } from 'next/cache'
 
@@ -141,6 +141,67 @@ export async function actionUpdatePlanLicencia (initialState: unknown, formData:
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error al actualizar el plan de la licencia'
+    return {
+      success: false,
+      message
+    }
+  } finally {
+    revalidatePath('/')
+  }
+}
+
+export async function actionRenovarLicenciaPorMes (initialState: unknown, formData: FormData) {
+  // Obtener los datos del formulario
+  const id = formData.get('id')?.toString() ?? ''
+
+  // Validar los datos del formulario
+  if (!id) {
+    return {
+      success: false,
+      message: 'Faltan datos para renovar la licencia.'
+    }
+  }
+
+  try {
+    await renovarLicenciaPorMes(Number(id))
+
+    return {
+      success: true,
+      message: 'Licencia renovada por 1 mes con éxito.'
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al renovar la licencia'
+    return {
+      success: false,
+      message
+    }
+  } finally {
+    revalidatePath('/')
+  }
+}
+
+export async function actionRenovarLicenciaHastaFecha (initialState: unknown, formData: FormData) {
+  // Obtener los datos del formulario
+  const id = formData.get('id')?.toString() ?? ''
+  const expiracion = formData.get('expiracion')?.toString() ?? ''
+
+  // Validar los datos del formulario
+  if (!id || !expiracion) {
+    return {
+      success: false,
+      message: 'Faltan datos para renovar la licencia.'
+    }
+  }
+
+  try {
+    await updateExpiracionLicencia(Number(id), expiracion)
+
+    return {
+      success: true,
+      message: 'Licencia renovada exitosamente hasta la fecha especificada.'
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al renovar la licencia'
     return {
       success: false,
       message
