@@ -1,4 +1,4 @@
-import { FileStackIcon, Home } from "lucide-react"
+import { FileStackIcon, Home, Megaphone } from "lucide-react"
 
 import {
   Sidebar,
@@ -25,6 +25,11 @@ const items = [
     title: "Licencias",
     url: "/licencias",
     icon: FileStackIcon,
+  },
+  {
+    title: "Anuncios",
+    url: "/cliente/anuncios",
+    icon: Megaphone,
   }
 ]
 

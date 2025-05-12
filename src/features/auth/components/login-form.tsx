@@ -13,26 +13,31 @@ export default function LoginForm () {
   const [state, formAction, isPending] = useActionState(actionLogin, null)
 
   useToastState(state)
-
   return (
     <Form className='flex flex-col gap-4' action={formAction}>
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="username">Usuario</Label>
+          <Label htmlFor="username">
+            Usuario
+          </Label>
           <Input
             id="username"
             name="username"
             type="text"
+            placeholder="Usuario o teléfono"
             required
           />
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="password">Contraseña</Label>
+          <Label htmlFor="password">
+            Contraseña
+          </Label>
           <Input
             id="password"
             name="password"
             type="password"
+            placeholder="Contraseña o licencia"
             required
           />
         </div>

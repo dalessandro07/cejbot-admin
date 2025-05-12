@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 
 interface LicenciaInfoProps {
   licencia: TLicencia
-  wspMessage: string
+  wspMessage?: string
 }
 
 export default function LicenciaInfo ({ licencia, wspMessage }: LicenciaInfoProps) {

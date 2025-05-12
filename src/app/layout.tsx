@@ -1,7 +1,7 @@
 import AppSidebar from '@/core/components/layout/app-sidebar'
 import { SidebarProvider, SidebarTrigger } from '@/core/components/ui/sidebar'
 import { Toaster } from '@/core/components/ui/sonner'
-import { checkSession } from '@/features/auth/lib/session'
+import { checkSession, getSessionRole } from '@/features/auth/lib/session'
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
@@ -26,6 +26,8 @@ export default async function RootLayout ({
   children: React.ReactNode
 }>) {
   const isLoggedIn = await checkSession()
+  const userRole = await getSessionRole()
+  const isAdmin = userRole === 'admin'
 
   return (
     <html lang="es">
@@ -34,10 +36,10 @@ export default async function RootLayout ({
       >
         <div className='flex min-h-dvh'>
           <SidebarProvider>
-            {isLoggedIn ? <AppSidebar /> : null}
+            {isLoggedIn && isAdmin && <AppSidebar />}
             <div className='flex flex-col flex-1 min-h-dvh'>
-              <main className='flex-1'>
-                <SidebarTrigger />
+              <main className='flex flex-col flex-1'>
+                {isLoggedIn && isAdmin && <SidebarTrigger />}
                 {children}
               </main>
               <Toaster richColors />

@@ -1,7 +1,7 @@
-import { db, licenciasTable } from '@/core/db'
+import { anunciosTable, db, licenciasTable, pagosTable } from '@/core/db'
 import { formatDate } from '@/core/lib/utils'
 import { addDay } from '@formkit/tempo'
-import { and, eq, gte, lte } from 'drizzle-orm'
+import { and, desc, eq, gte, lte } from 'drizzle-orm'
 
 //! LICENCIAS
 
@@ -33,6 +33,48 @@ export async function getLicenciasProximasAVencer (diasLimite = 7) {
   return data
 }
 
+export async function getLicenciaByClienteId (id: number) {
+  const data = await db
+    .select()
+    .from(licenciasTable)
+    .where(eq(licenciasTable.id, id))
+    .limit(1)
+
+  return data[0]
+}
+
+export async function getLicenciaById (id: number) {
+  const data = await db
+    .select()
+    .from(licenciasTable)
+    .where(eq(licenciasTable.id, id))
+    .limit(1)
+
+  return data[0]
+}
+
+//! PAGOS
+
+export async function getPagosByLicenciaId (licenciaId: number) {
+  const data = await db
+    .select()
+    .from(pagosTable)
+    .where(eq(pagosTable.licenciaId, licenciaId))
+    .orderBy(desc(pagosTable.fecha))
+
+  return data
+}
+
+export async function getPagoById (id: number) {
+  const data = await db
+    .select()
+    .from(pagosTable)
+    .where(eq(pagosTable.id, id))
+    .limit(1)
+
+  return data[0]
+}
+
 export async function getMetricasLicencias () {
   const licencias = await getAllLicencias()
 
@@ -48,10 +90,31 @@ export async function getMetricasLicencias () {
     acc[plan] = (acc[plan] || 0) + 1
     return acc
   }, {} as Record<string, number>)
-
   return {
     total,
     activas,
     porPlan
   }
+}
+
+//! ANUNCIOS
+
+export async function getAllAnuncios () {
+  const data = await db.select().from(anunciosTable)
+    .orderBy(desc(anunciosTable.fechaPublicacion))
+  return data
+}
+
+export async function getAnunciosActivos () {
+  const data = await db.select().from(anunciosTable)
+    .where(eq(anunciosTable.activo, 1))
+    .orderBy(desc(anunciosTable.fechaPublicacion))
+  return data
+}
+
+export async function getAnuncioById (id: number) {
+  const data = await db.select().from(anunciosTable)
+    .where(eq(anunciosTable.id, id))
+    .limit(1)
+  return data[0]
 }

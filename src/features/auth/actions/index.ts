@@ -15,14 +15,17 @@ export async function actionLogin (initialState: unknown, formData: FormData) {
     }
   }
 
-  let exito: boolean = false
+  let role: string = 'admin'
 
   try {
-    exito = await signIn(username, password)
+    const result = await signIn(username, password)
 
-    if (!exito) {
+    if (!result.success) {
       throw new Error("Usuario o contraseña incorrectos")
     }
+
+    role = result.role || 'admin'
+
   } catch (err) {
     const message = err instanceof Error ? err.message : "Error desconocido"
 
@@ -31,7 +34,11 @@ export async function actionLogin (initialState: unknown, formData: FormData) {
       message
     }
   } finally {
-    if (exito) redirect('/')
+    if (role === 'cliente') {
+      redirect('/cliente')
+    } else {
+      redirect('/')
+    }
   }
 }
 

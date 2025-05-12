@@ -27,6 +27,8 @@ const badgeVariants = cva(
           "border-transparent bg-indigo-600 text-indigo-50 [a&]:hover:bg-indigo-500",
         prueba:
           "border-transparent bg-gray-600 text-gray-50 [a&]:hover:bg-gray-500",
+        success:
+          "border-transparent bg-green-600 text-green-50 [a&]:hover:bg-green-500",
       },
     },
     defaultVariants: {

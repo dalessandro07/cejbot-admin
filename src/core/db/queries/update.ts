@@ -1,4 +1,4 @@
-import { db, licenciasTable } from '@/core/db'
+import { db, licenciasTable, pagosTable } from '@/core/db'
 import { formatDate } from '@/core/lib/utils'
 import { addMonth } from '@formkit/tempo'
 import { eq } from 'drizzle-orm'
@@ -50,4 +50,22 @@ export async function renovarLicenciaPorMes (
   const nuevaExpiracion = formatDate(addMonth(hoy, 1))
 
   await updateExpiracionLicencia(id, nuevaExpiracion)
+}
+
+//! PAGOS
+
+export async function updatePago (
+  id: number,
+  datos: {
+    fecha?: string,
+    monto?: number,
+    medioPago?: string,
+    notas?: string
+  },
+): Promise<void> {
+  await db
+    .update(pagosTable)
+    .set(datos)
+    .where(eq(pagosTable.id, id))
+    .execute()
 }

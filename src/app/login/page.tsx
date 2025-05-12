@@ -10,7 +10,7 @@ export default function PaginaLogin () {
             Bienvenido a CEJBOT
           </CardTitle>
           <CardDescription>
-            Ingresa tus credenciales para acceder al panel de administración de CEJBOT.
+            Ingresa tus credenciales para acceder al panel de gestión de CEJBOT.
           </CardDescription>
         </CardHeader>
 

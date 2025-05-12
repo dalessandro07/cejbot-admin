@@ -22,17 +22,49 @@ export async function checkSession () {
   return session.isLoggedIn
 }
 
+export async function getSessionRole () {
+  const session = await getSession()
+  return session.role || 'admin'
+}
+
 export async function signIn (username: string, password: string) {
   const session = await getSession()
 
+  // Verificar si es admin
   if (username === SITE_USERNAME && password === SITE_PASSWORD) {
     session.isLoggedIn = true
     session.username = username
+    session.role = 'admin'
     await session.save()
-    return true
+    return { success: true, role: 'admin' }
   }
 
-  return false
+  // Verificar si es un cliente (teléfono y licencia)
+  const db = (await import('@/core/db')).db
+  const licenciasTable = (await import('@/core/db/schema')).licenciasTable
+  const { eq, and } = await import('drizzle-orm')
+
+  const cliente = await db.select()
+    .from(licenciasTable)
+    .where(
+      and(
+        eq(licenciasTable.telefono, username),
+        eq(licenciasTable.licencia, password),
+        eq(licenciasTable.activo, 1)
+      )
+    )
+    .limit(1)
+
+  if (cliente && cliente.length > 0) {
+    session.isLoggedIn = true
+    session.username = cliente[0].cliente
+    session.role = 'cliente'
+    session.clienteId = cliente[0].id
+    await session.save()
+    return { success: true, role: 'cliente' }
+  }
+
+  return { success: false }
 }
 
 export async function signOut () {
