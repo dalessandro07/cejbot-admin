@@ -7,6 +7,7 @@ import {
   AccordionTrigger
 } from '@/core/components/ui/accordion'
 import { Badge } from '@/core/components/ui/badge'
+import { Button } from '@/core/components/ui/button'
 import { Switch } from '@/core/components/ui/switch'
 import WhatsappLink from '@/core/components/ui/whatsapp-link'
 import type { TLicencia } from '@/core/db'
@@ -15,8 +16,9 @@ import { PLANES_DISPLAY } from '@/core/lib/constants'
 import { formatDate } from '@/core/lib/utils'
 import type { TPlan } from '@/core/types'
 import { actionUpdateEstadoLicencia } from '@/features/licencias/actions'
+import BtnEliminar from '@/features/licencias/components/item/btn-eliminar'
 import useWhatsappMsg from '@/features/licencias/hooks/useWhatsappMsg'
-import { Loader2 } from 'lucide-react'
+import { ClipboardIcon, Loader2 } from 'lucide-react'
 import { startTransition, useActionState } from 'react'
 
 export default function ItemLicencia ({
@@ -41,6 +43,10 @@ export default function ItemLicencia ({
     })
   }
 
+  const handleCopyLicense = () => {
+    navigator.clipboard.writeText(licencia.licencia)
+  }
+
   return (
     <Accordion type="single" collapsible className="w-full mb-4">
       <AccordionItem value={`licencia-${licencia.id}`} className="border rounded-lg shadow-sm">
@@ -61,10 +67,16 @@ export default function ItemLicencia ({
                 <span className="text-muted-foreground">Teléfono:</span>
                 <WhatsappLink whatsappNumber={licencia.telefono} message={wspMessage} />
               </p>
-              <p className="flex justify-between">
+              <div className="flex justify-between">
                 <span className="text-muted-foreground">Licencia:</span>
-                <span>{licencia.licencia}</span>
-              </p>
+                <div className="flex items-center gap-2">
+                  <span>{licencia.licencia}</span>
+                  <Button onClick={handleCopyLicense} variant="outline" size="sm">
+                    <ClipboardIcon />
+                    <span className="sr-only">Copiar licencia</span>
+                  </Button>
+                </div>
+              </div>
               <p className="flex justify-between">
                 <span className="text-muted-foreground">Creación:</span>
                 <span>{formatDate(licencia.creacion!, 'full', 'short')}</span>
@@ -81,25 +93,29 @@ export default function ItemLicencia ({
 
             <div className="flex items-center justify-between w-full gap-2 pt-3 border-t">
               <span className="text-sm font-medium">Estado</span>
-              <div className="flex items-center gap-2">
-                <Switch
-                  name='estado'
-                  checked={isActive}
-                  onCheckedChange={handleCheckedChange}
-                  disabled={isPending}
-                />
-                {isPending ? (
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    <span className="text-sm">
-                      {isActive ? 'Activando' : 'Desactivando'}
+              <div className="flex items-center gap-5">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    name='estado'
+                    checked={isActive}
+                    onCheckedChange={handleCheckedChange}
+                    disabled={isPending}
+                  />
+                  {isPending ? (
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span className="text-sm">
+                        {isActive ? 'Activando' : 'Desactivando'}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className={`text-sm ${isActive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
+                      {isActive ? 'Activo' : 'Inactivo'}
                     </span>
-                  </div>
-                ) : (
-                  <span className={`text-sm ${isActive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
-                    {isActive ? 'Activo' : 'Inactivo'}
-                  </span>
-                )}
+                  )}
+                </div>
+
+                <BtnEliminar id={licencia.id} />
               </div>
             </div>
           </div>

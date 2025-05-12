@@ -2,7 +2,7 @@
 
 import { Input } from '@/core/components/ui/input'
 import type { TLicencia } from '@/core/db'
-import ItemLicencia from '@/features/licencias/components/item-licencia'
+import ItemLicencia from '@/features/licencias/components/item/item-licencia'
 import { useState } from 'react'
 
 export default function ListaLicencias ({

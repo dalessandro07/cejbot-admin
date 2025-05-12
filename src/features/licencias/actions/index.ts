@@ -1,12 +1,15 @@
 'use server'
 
+import { deleteLicencia } from '@/core/db/queries/delete'
 import { insertLicencia } from '@/core/db/queries/insert'
 import { updateEstadoLicencia } from '@/core/db/queries/update'
 import { PLANES } from '@/core/lib/constants'
+import { revalidatePath } from 'next/cache'
 
 export async function actionInsertLicencia (initialState: unknown, formData: FormData) {
   // Obtener los datos del formulario
   let cliente = formData.get('cliente')?.toString() ?? ''
+  const telefono = formData.get('telefono')?.toString() ?? ''
   let plan = formData.get('plan')?.toString() ?? ''
   const expiracion = formData.get('expiracion')?.toString() ?? ''
 
@@ -32,7 +35,8 @@ export async function actionInsertLicencia (initialState: unknown, formData: For
       cliente,
       licencia,
       plan,
-      expiracion
+      expiracion,
+      telefono
     })
 
     return {
@@ -50,6 +54,8 @@ export async function actionInsertLicencia (initialState: unknown, formData: For
       success: false,
       message
     }
+  } finally {
+    revalidatePath('/')
   }
 }
 
@@ -79,5 +85,37 @@ export async function actionUpdateEstadoLicencia (initialState: unknown, formDat
       success: false,
       message
     }
+  } finally {
+    revalidatePath('/')
+  }
+}
+
+export async function actionDeleteLicencia (initialState: unknown, formData: FormData) {
+  // Obtener los datos del formulario
+  const id = formData.get('id')?.toString() ?? ''
+
+  // Validar los datos del formulario
+  if (!id) {
+    return {
+      success: false,
+      message: 'Faltan datos para eliminar la licencia.'
+    }
+  }
+
+  try {
+    await deleteLicencia(Number(id))
+
+    return {
+      success: true,
+      message: 'Licencia eliminada con éxito.'
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al eliminar la licencia'
+    return {
+      success: false,
+      message
+    }
+  } finally {
+    revalidatePath('/')
   }
 }
