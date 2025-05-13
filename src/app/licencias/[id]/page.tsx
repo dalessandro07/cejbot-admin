@@ -15,26 +15,25 @@ import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 
 interface LicenciaPageProps {
-  params: {
-    id: string
-  }
+  params: Promise<{ id: string }>
 }
 
 export default async function LicenciaPage ({ params }: LicenciaPageProps) {
-  const id = parseInt(params.id)
+  const { id } = await params
 
-  if (isNaN(id)) {
+  if (isNaN(Number(id))) {
     notFound()
   }
 
-  const licencia = await getLicenciaById(id)
+  // Obtener licencia por ID
+  const licencia = await getLicenciaById(Number(id))
 
   if (!licencia) {
     notFound()
   }
 
   // Obtener pagos de la licencia
-  const pagos = await getPagosByLicenciaId(id)
+  const pagos = await getPagosByLicenciaId(Number(id))
 
   return (
     <main className="flex flex-col gap-5 p-5 pt-12 lg:pt-5 grow">
@@ -50,7 +49,8 @@ export default async function LicenciaPage ({ params }: LicenciaPageProps) {
 
       <Suspense fallback={<LoaderDefault />}>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="space-y-4 md:col-span-2">            <LicenciaInfoDetail licencia={licencia} />
+          <div className="space-y-4 md:col-span-2">
+            <LicenciaInfoDetail licencia={licencia} />
 
             <div className="flex flex-col gap-4 p-4 bg-white border rounded-lg shadow-sm dark:bg-gray-950">
               <h3 className="text-lg font-semibold">Acciones</h3>
