@@ -3,6 +3,7 @@ import LoaderDefault from '@/core/components/ui/loader-default'
 import { Separator } from '@/core/components/ui/separator'
 import { getLicenciaById, getPagosByLicenciaId } from '@/core/db/queries/select'
 import BtnEliminar from '@/features/licencias/components/item/detail-components/btn-eliminar'
+import BtnLimpiarDispositivo from '@/features/licencias/components/item/detail-components/btn-limpiar-dispositivo'
 import BtnRenovarMes from '@/features/licencias/components/item/detail-components/btn-renovar-mes'
 import DialogRenovarLicencia from '@/features/licencias/components/item/detail-components/dialog-renovar-licencia'
 import EstadoLicencia from '@/features/licencias/components/item/detail-components/estado-licencia'
@@ -61,10 +62,10 @@ export default async function LicenciaPage ({ params }: LicenciaPageProps) {
                 <div className="flex items-center gap-2 text-sm">
                   <span>Estado:</span>
                   <EstadoLicencia licencia={licencia} />
-                </div>
-                <SelectorPlan licencia={licencia} />
+                </div>                <SelectorPlan licencia={licencia} />
                 <BtnRenovarMes id={licencia.id} />
                 <DialogRenovarLicencia licencia={licencia} />
+                <BtnLimpiarDispositivo id={licencia.id} />
                 <BtnEliminar id={licencia.id} />
               </div>
             </div>

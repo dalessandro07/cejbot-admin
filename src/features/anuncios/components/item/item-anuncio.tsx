@@ -26,8 +26,8 @@ export default function ItemAnuncio ({ anuncio, isAdmin }: ItemAnuncioProps) {
   async function handleDelete () {
     const result = await eliminarAnuncio(anuncio.id)
 
-    if (result.error) {
-      toast.error(result.error)
+    if (!result.success) {
+      toast.error(result.message)
       return
     }
 
@@ -38,8 +38,8 @@ export default function ItemAnuncio ({ anuncio, isAdmin }: ItemAnuncioProps) {
   async function handleEdit (formData: FormData) {
     const result = await editarAnuncio(formData)
 
-    if (result.error) {
-      toast.error(result.error)
+    if (!result.success) {
+      toast.error(result.message)
       return
     }
 
@@ -51,8 +51,8 @@ export default function ItemAnuncio ({ anuncio, isAdmin }: ItemAnuncioProps) {
     const nuevoEstado = anuncio.activo === 0
     const result = await cambiarEstadoAnuncio(anuncio.id, nuevoEstado)
 
-    if (result.error) {
-      toast.error(result.error)
+    if (!result.success) {
+      toast.error(result.message)
       return
     }
 

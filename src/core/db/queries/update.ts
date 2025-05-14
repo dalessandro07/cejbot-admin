@@ -52,6 +52,16 @@ export async function renovarLicenciaPorMes (
   await updateExpiracionLicencia(id, nuevaExpiracion)
 }
 
+export async function limpiarDispositivoLicencia (
+  id: number,
+): Promise<void> {
+  await db
+    .update(licenciasTable)
+    .set({ dispositivo: null })
+    .where(eq(licenciasTable.id, id))
+    .execute()
+}
+
 //! PAGOS
 
 export async function updatePago (

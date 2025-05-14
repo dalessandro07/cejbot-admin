@@ -3,6 +3,7 @@
 import { Button } from '@/core/components/ui/button'
 import useToastState from '@/core/hooks/useToastState'
 import { actionLogout } from '@/features/auth/actions'
+import { LogOutIcon } from 'lucide-react'
 import Form from 'next/form'
 import { useActionState } from 'react'
 
@@ -14,7 +15,8 @@ export default function BtnLogout () {
 
   return (
     <Form action={formAction}>
-      <Button disabled={isPending} variant='outline'>
+      <Button disabled={isPending} variant='destructive'>
+        <LogOutIcon />
         {isPending ? 'Cerrando sesión...' : 'Cerrar sesión'}
       </Button>
     </Form>

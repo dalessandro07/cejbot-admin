@@ -5,25 +5,17 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/core/components/ui/input"
 import { Label } from "@/core/components/ui/label"
 import { Switch } from "@/core/components/ui/switch"
+import useToastState from '@/core/hooks/useToastState'
 import { crearAnuncio } from '@/features/anuncios/actions'
-import { useState } from "react"
-import { toast } from "sonner"
+import { useActionState, useState } from "react"
 import EditorHTML from "../editor/editor-html"
 
 export default function FormNuevoAnuncio () {
   const [open, setOpen] = useState(false)
 
-  async function handleSubmit (formData: FormData) {
-    const result = await crearAnuncio(formData)
+  const [state, formAction, isPending] = useActionState(crearAnuncio, null)
 
-    if (result.error) {
-      toast.error(result.error)
-      return
-    }
-
-    toast.success("Anuncio publicado correctamente")
-    setOpen(false)
-  }
+  useToastState(state)
 
   return (
     <>
@@ -37,7 +29,7 @@ export default function FormNuevoAnuncio () {
               Crea un anuncio que será visible para todos los clientes
             </DialogDescription>
           </DialogHeader>
-          <form action={handleSubmit}>
+          <form action={formAction}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="titulo">Título</Label>
@@ -47,7 +39,8 @@ export default function FormNuevoAnuncio () {
                   placeholder="Título del anuncio"
                   required
                 />
-              </div>              <div className="grid gap-2">
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="contenido">Contenido</Label>
                 <EditorHTML
                   id="contenido"
@@ -60,11 +53,14 @@ export default function FormNuevoAnuncio () {
                 <Label htmlFor="importante">Marcar como importante</Label>
               </div>
             </div>
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 Cancelar
               </Button>
-              <Button type="submit">Publicar Anuncio</Button>
+              <Button disabled={isPending} type="submit">
+                {isPending ? 'Creando...' : 'Crear anuncio'}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

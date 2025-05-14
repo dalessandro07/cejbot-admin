@@ -2,7 +2,7 @@
 
 import { deleteLicencia } from '@/core/db/queries/delete'
 import { insertLicencia } from '@/core/db/queries/insert'
-import { renovarLicenciaPorMes, updateEstadoLicencia, updateExpiracionLicencia, updatePlanLicencia } from '@/core/db/queries/update'
+import { limpiarDispositivoLicencia, renovarLicenciaPorMes, updateEstadoLicencia, updateExpiracionLicencia, updatePlanLicencia } from '@/core/db/queries/update'
 import { PLANES } from '@/core/lib/constants'
 import { revalidatePath } from 'next/cache'
 
@@ -202,6 +202,36 @@ export async function actionRenovarLicenciaHastaFecha (initialState: unknown, fo
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error al renovar la licencia'
+    return {
+      success: false,
+      message
+    }
+  } finally {
+    revalidatePath('/')
+  }
+}
+
+export async function actionLimpiarDispositivoLicencia (initialState: unknown, formData: FormData) {
+  // Obtener los datos del formulario
+  const id = formData.get('id')?.toString() ?? ''
+
+  // Validar los datos del formulario
+  if (!id) {
+    return {
+      success: false,
+      message: 'Faltan datos para limpiar el dispositivo de la licencia.'
+    }
+  }
+
+  try {
+    await limpiarDispositivoLicencia(Number(id))
+
+    return {
+      success: true,
+      message: 'Dispositivo limpiado con éxito.'
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al limpiar el dispositivo'
     return {
       success: false,
       message

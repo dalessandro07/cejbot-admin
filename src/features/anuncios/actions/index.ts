@@ -5,14 +5,14 @@ import { anunciosTable } from '@/core/db/schema'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
-export async function crearAnuncio (formData: FormData) {
+export async function crearAnuncio (initialState: unknown, formData: FormData) {
   try {
     const titulo = formData.get('titulo') as string
     const contenido = formData.get('contenido') as string
     const importante = formData.get('importante') === 'on' ? 1 : 0
 
     if (!titulo || !contenido) {
-      return { error: 'El título y el contenido son obligatorios' }
+      return { success: false, message: 'El título y el contenido son obligatorios' }
     }
 
     await db.insert(anunciosTable).values({
@@ -21,12 +21,13 @@ export async function crearAnuncio (formData: FormData) {
       importante
     })
 
-    revalidatePath('/cliente')
-    revalidatePath('/cliente/anuncios')
-    return { success: true }
+
+    return { success: true, message: 'Anuncio creado correctamente' }
   } catch (error) {
     console.error('Error al crear anuncio:', error)
-    return { error: 'Error al crear el anuncio' }
+    return { success: false, message: 'Error al crear el anuncio' }
+  } finally {
+    revalidatePath('/')
   }
 }
 
@@ -39,7 +40,7 @@ export async function editarAnuncio (formData: FormData) {
     const activo = formData.get('activo') === 'on' ? 1 : 0
 
     if (!id || !titulo || !contenido) {
-      return { error: 'Datos incompletos' }
+      return { success: false, message: 'Datos incompletos' }
     }
 
     await db.update(anunciosTable)
@@ -51,12 +52,13 @@ export async function editarAnuncio (formData: FormData) {
       })
       .where(eq(anunciosTable.id, id))
 
-    revalidatePath('/cliente')
-    revalidatePath('/cliente/anuncios')
-    return { success: true }
+
+    return { success: true, message: 'Anuncio editado correctamente' }
   } catch (error) {
     console.error('Error al editar anuncio:', error)
-    return { error: 'Error al editar el anuncio' }
+    return { success: false, message: 'Error al editar el anuncio' }
+  } finally {
+    revalidatePath('/')
   }
 }
 
@@ -64,12 +66,12 @@ export async function eliminarAnuncio (id: number) {
   try {
     await db.delete(anunciosTable).where(eq(anunciosTable.id, id))
 
-    revalidatePath('/cliente')
-    revalidatePath('/cliente/anuncios')
-    return { success: true }
+    return { success: true, message: 'Anuncio eliminado correctamente' }
   } catch (error) {
     console.error('Error al eliminar anuncio:', error)
-    return { error: 'Error al eliminar el anuncio' }
+    return { success: false, message: 'Error al eliminar el anuncio' }
+  } finally {
+    revalidatePath('/')
   }
 }
 
@@ -79,11 +81,11 @@ export async function cambiarEstadoAnuncio (id: number, activo: boolean) {
       .set({ activo: activo ? 1 : 0 })
       .where(eq(anunciosTable.id, id))
 
-    revalidatePath('/cliente')
-    revalidatePath('/cliente/anuncios')
-    return { success: true }
+    return { success: true, message: 'Estado del anuncio cambiado correctamente' }
   } catch (error) {
     console.error('Error al cambiar estado del anuncio:', error)
-    return { error: 'Error al actualizar el anuncio' }
+    return { success: false, message: 'Error al actualizar el anuncio' }
+  } finally {
+    revalidatePath('/')
   }
 }

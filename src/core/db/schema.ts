@@ -35,7 +35,9 @@ export const anunciosTable = sqliteTable('anuncios', {
 
 export type TLicencia = typeof licenciasTable.$inferSelect
 export type TLicenciaInsert = typeof licenciasTable.$inferInsert
+
 export type TPago = typeof pagosTable.$inferSelect
 export type TPagoInsert = typeof pagosTable.$inferInsert
+
 export type TAnuncio = typeof anunciosTable.$inferSelect
 export type TAnuncioInsert = typeof anunciosTable.$inferInsert
