@@ -99,10 +99,11 @@ export default async function ClientePage () {
 
               <Separator />
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">                <div>
-                <p className="text-sm text-muted-foreground">Plan</p>
-                <p className="font-medium capitalize">{licencia?.plan || 'Básico'}</p>
-              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Plan</p>
+                  <p className="font-medium capitalize">{licencia?.plan || 'Básico'}</p>
+                </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Estado</p>
                   <p className={`font-medium ${licencia?.activo === 1 ? 'text-green-600' : 'text-red-600'}`}>

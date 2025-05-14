@@ -17,7 +17,7 @@ export function formatDate (inputDate?: DateInput | null, dateStyle?: FormatStyl
   return format(inputDate, {
     date: dateStyle,
     time: timeStyle,
-  })
+  }, 'es-PE')
 }
 
 export function formatDistanceToNow (date: Date | string) {
